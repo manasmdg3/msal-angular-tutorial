@@ -15,7 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
 
-  constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration, private broadcastService: MsalBroadcastService, private authService: MsalService) { }
+  constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration, private broadcastService: MsalBroadcastService, private msalService: MsalService) { }
 
   ngOnInit() {
     this.isIframe = window !== window.parent && !window.opener;
@@ -26,26 +26,27 @@ export class AppComponent implements OnInit, OnDestroy {
       takeUntil(this._destroying$)
     )
     .subscribe(() => {
+      console.log('inside app.component',this.msalService);
       this.setLoginDisplay();
     })
   }
 
   login() {
     if (this.msalGuardConfig.authRequest){
-      this.authService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest);
+      this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest);
     } else {
-      this.authService.loginRedirect();
+      this.msalService.loginRedirect();
     }
   }
 
   logout() { // Add log out function here
-    this.authService.logoutRedirect({
+    this.msalService.logoutRedirect({
       postLogoutRedirectUri: 'http://localhost:4200'
     });
   }
 
   setLoginDisplay() {
-    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    this.loginDisplay = this.msalService.instance.getAllAccounts().length > 0;
   }
 
   ngOnDestroy(): void {
