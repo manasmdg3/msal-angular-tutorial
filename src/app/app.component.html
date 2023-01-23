@@ -1,4 +1,5 @@
 <mat-toolbar color="primary">
+  <a *ngIf="isAuthenticated">{{ activeUser }}</a>
   <a class="title" href="/">{{ title }}</a>
 
   <div class="toolbar-spacer"></div>

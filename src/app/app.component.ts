@@ -11,6 +11,8 @@ import { filter, takeUntil } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'msal-angular-tutorial';
+  activeUser: string | undefined = "Unknown user";
+  isAuthenticated: boolean = false;
   isIframe = false;
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
@@ -27,13 +29,15 @@ export class AppComponent implements OnInit, OnDestroy {
     )
     .subscribe(() => {
       console.log('inside app.component',this.msalService);
+      console.log('showing info',this.msalService.instance.getAllAccounts()[0]['name']);
+      this.setAuthenticationStatus();
       this.setLoginDisplay();
     })
   }
 
   login() {
     if (this.msalGuardConfig.authRequest){
-      this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as RedirectRequest);
+      this.msalService.loginRedirect({scopes: ["User.Read"],...this.msalGuardConfig.authRequest} as RedirectRequest);
     } else {
       this.msalService.loginRedirect();
     }
@@ -43,6 +47,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.msalService.logoutRedirect({
       postLogoutRedirectUri: 'http://localhost:4200'
     });
+  }
+
+  setAuthenticationStatus(): void {
+    let activeAccount = this.msalService.instance.getActiveAccount();
+    if (!activeAccount && this.msalService.instance.getAllAccounts().length > 0) {
+      activeAccount = this.msalService.instance.getAllAccounts()[0];
+      this.msalService.instance.setActiveAccount(activeAccount); 
+    }
+    this.isAuthenticated = !!activeAccount;
+    this.activeUser = activeAccount?.username;
   }
 
   setLoginDisplay() {

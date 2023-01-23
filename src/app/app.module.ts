@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 
-import { MsalModule, MsalRedirectComponent, MsalGuard, MsalInterceptor } from '@azure/msal-angular'; // MsalGuard added to imports
+import { MsalModule, MsalRedirectComponent, MsalGuard, MsalInterceptor, MsalService, MsalBroadcastService } from '@azure/msal-angular'; // MsalGuard added to imports
 import { PublicClientApplication, InteractionType } from '@azure/msal-browser'; // InteractionType added to imports
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
@@ -58,6 +58,8 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
       useClass: MsalInterceptor,
       multi: true
     },
+    MsalService,
+    MsalBroadcastService,
     MsalGuard
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]
