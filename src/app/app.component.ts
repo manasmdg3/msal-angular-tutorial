@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { InteractionStatus, RedirectRequest } from '@azure/msal-browser';
+import { InteractionStatus, RedirectRequest, EventMessage, EventType } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -17,10 +17,29 @@ export class AppComponent implements OnInit, OnDestroy {
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
 
-  constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration, private broadcastService: MsalBroadcastService, private msalService: MsalService) { }
+  constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+  private broadcastService: MsalBroadcastService, 
+  private msalService: MsalService) { }
 
   ngOnInit() {
     this.isIframe = window !== window.parent && !window.opener;
+    this.broadcastService.msalSubject$
+		.pipe(
+			filter((msg: EventMessage) => msg.eventType === EventType.ACQUIRE_TOKEN_SUCCESS),
+			takeUntil(this._destroying$)
+		)
+		.subscribe(msalEvent => {
+      // Do something with event payload here
+      const totalPayload = msalEvent.payload['idTokenClaims'];
+      console.log('totalPayload: ', totalPayload);
+      const idTokenClaims = msalEvent.payload['idTokenClaims'];
+      console.log('idTokenClaims: ', idTokenClaims);
+      const idToken = msalEvent.payload['idToken'];
+      console.log('idToken: ', idToken);
+      console.log('inside app.component, broadcastService.msalSubject$: ',this.msalService);
+      this.setAuthenticationStatus();
+      this.setLoginDisplay();
+		});
 
     this.broadcastService.inProgress$
     .pipe(
@@ -29,7 +48,8 @@ export class AppComponent implements OnInit, OnDestroy {
     )
     .subscribe(() => {
       console.log('inside app.component',this.msalService);
-      console.log('showing info',this.msalService.instance.getAllAccounts()[0]['name']);
+      console.log('showing info: Name: ',this.msalService.instance.getActiveAccount()[0]['name']);
+      sessionStorage.setItem('msalService', this.msalService.instance.getActiveAccount()[0]['name']);
       this.setAuthenticationStatus();
       this.setLoginDisplay();
     })
