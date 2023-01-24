@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const idTokenClaims = msalEvent.payload['idTokenClaims'];
       console.log('idTokenClaims: ', idTokenClaims);
       const idToken = msalEvent.payload['idToken'];
+      sessionStorage.setItem('idToken', idToken);
       console.log('idToken: ', idToken);
       console.log('inside app.component, broadcastService.msalSubject$: ',this.msalService);
       this.setAuthenticationStatus();
