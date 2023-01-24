@@ -30,7 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		)
 		.subscribe(msalEvent => {
       // Do something with event payload here
-      const totalPayload = msalEvent.payload['idTokenClaims'];
+      const totalPayload = msalEvent.payload;
       console.log('totalPayload: ', totalPayload);
       const idTokenClaims = msalEvent.payload['idTokenClaims'];
       console.log('idTokenClaims: ', idTokenClaims);
