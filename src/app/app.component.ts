@@ -33,13 +33,16 @@ export class AppComponent implements OnInit, OnDestroy {
 		.subscribe(msalEvent => {
       // Do something with event payload here
       const totalPayload = msalEvent.payload;
-      console.log('totalPayload: ', totalPayload);
+      console.log('totalPayload:: ', totalPayload);
+      const accessToken = msalEvent.payload['accessToken'];
+      console.log('accessToken:: ', accessToken);
       const idTokenClaims = msalEvent.payload['idTokenClaims'];
-      console.log('idTokenClaims: ', idTokenClaims);
+      console.log('idTokenClaims:: ', idTokenClaims);
       const idToken = msalEvent.payload['idToken'];
+      sessionStorage.setItem('accessToken', accessToken);
       sessionStorage.setItem('idToken', idToken);
-      console.log('idToken: ', idToken);
-      console.log('inside app.component, broadcastService.msalSubject$: ',this.msalService);
+      console.log('idToken:: ', idToken);
+      console.log('inside app.component, broadcastService.msalSubject$:: ',this.msalService);
       this.setAuthenticationStatus();
       this.setLoginDisplay();
 		});
