@@ -14,6 +14,7 @@ import { ProfileComponent } from './profile/profile.component';
 
 import { MsalModule, MsalRedirectComponent, MsalGuard, MsalInterceptor, MsalService, MsalBroadcastService } from '@azure/msal-angular'; // MsalGuard added to imports
 import { PublicClientApplication, InteractionType } from '@azure/msal-browser'; // InteractionType added to imports
+import { environment } from '../environments/environment'; // Environment variables to get clientID and authority 
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
@@ -33,8 +34,8 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     HttpClientModule,
     MsalModule.forRoot( new PublicClientApplication({
       auth: {
-        clientId: 'f1066828-dffd-476d-b9ec-c3414ab0e7ca', // Application (client) ID from the app registration
-        authority: 'https://login.microsoftonline.com/8ef1a675-ae7c-426a-8fdd-1c77aa6bb730', // The Azure cloud instance and the app's sign-in audience (tenant ID, common, organizations, or consumers)
+        clientId: environment.CLIENT_ID, // Application (client) ID from the app registration
+        authority: 'https://login.microsoftonline.com/' + environment.TENANT_ID, // The Azure cloud instance and the app's sign-in audience (tenant ID, common, organizations, or consumers)
         redirectUri: 'http://localhost:4200'// This is your redirect URI
       },
       cache: {
