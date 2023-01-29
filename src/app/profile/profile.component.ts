@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me';
+const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me?$select=employeeId,department,jobTitle,givenName,surname,id';//filter=endsWith(mail,'@abcmail.com')
 
 type ProfileType = {
   givenName?: string,
