@@ -3,6 +3,7 @@ import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfigur
 import { InteractionStatus, RedirectRequest, EventMessage, EventType } from '@azure/msal-browser';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
   private broadcastService: MsalBroadcastService, 
-  private msalService: MsalService) { }
+  private msalService: MsalService,
+  private http: HttpClient) { }
 
   ngOnInit() {
     this.isIframe = window !== window.parent && !window.opener;
@@ -58,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   login() {
     if (this.msalGuardConfig.authRequest){
-      this.msalService.loginRedirect({scopes: ["User.Read"],...this.msalGuardConfig.authRequest} as RedirectRequest);
+      this.msalService.loginRedirect({scopes: ["Directory.Read.All"],...this.msalGuardConfig.authRequest} as RedirectRequest);
     } else {
       this.msalService.loginRedirect();
     }

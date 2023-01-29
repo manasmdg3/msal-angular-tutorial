@@ -30,6 +30,7 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     MatButtonModule,
     MatToolbarModule,
     MatListModule,
+    HttpClientModule,
     MsalModule.forRoot( new PublicClientApplication({
       auth: {
         clientId: 'f1066828-dffd-476d-b9ec-c3414ab0e7ca', // Application (client) ID from the app registration
@@ -43,12 +44,12 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     }), {
         interactionType: InteractionType.Redirect, // MSAL Guard Configuration
         authRequest: {
-          scopes: ['user.read']
+          scopes: ['User.Read','Directory.Read.All']
         }
     }, {
       interactionType: InteractionType.Redirect, // MSAL Interceptor Configuration
       protectedResourceMap: new Map([ 
-          ['https://graph.microsoft.com/v1.0/me', ['user.read']]
+          ['https://graph.microsoft.com/v1.0/me', ['User.Read','Directory.Read.All']],
       ])
     })
   ],
@@ -58,8 +59,8 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
       useClass: MsalInterceptor,
       multi: true
     },
-    MsalService,
-    MsalBroadcastService,
+    // MsalService,
+    // MsalBroadcastService,
     MsalGuard
   ],
   bootstrap: [AppComponent, MsalRedirectComponent]

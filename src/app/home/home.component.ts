@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType, InteractionStatus } from '@azure/msal-browser';
+import { async, asyncScheduler } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -11,7 +12,7 @@ import { filter } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
   loginDisplay = false;
 
-  constructor(private authService: MsalService, private msalBroadcastService: MsalBroadcastService) { }
+  constructor(private msalService: MsalService, private msalBroadcastService: MsalBroadcastService) { }
 
   ngOnInit(): void {
     this.msalBroadcastService.msalSubject$
@@ -19,7 +20,7 @@ export class HomeComponent implements OnInit {
         filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
       )
       .subscribe((result: EventMessage) => {
-        console.log(result);
+        console.log('inside home component: ', result);
       });
 
     this.msalBroadcastService.inProgress$
@@ -29,9 +30,23 @@ export class HomeComponent implements OnInit {
       .subscribe(() => {
         this.setLoginDisplay();
       })
+      
+        try {
+          const token = this.msalService.acquireTokenSilent({
+            scopes: ['User.Read','Directory.Read.All']
+          });
+          console.log('inside home component: ',token);
+        } catch (err) {
+          console.error(err);
+        }
+      
   }
 
   setLoginDisplay() {
-    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    this.loginDisplay = this.msalService.instance.getAllAccounts().length > 0;
   }
 }
+function acquireToken() {
+  throw new Error('Function not implemented.');
+}
+
